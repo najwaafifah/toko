@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data  </title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .nav-link {
+            position: relative;
+            color: #4B5563;
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            transition: color 0.3s ease;
+        }
+        .nav-link:hover {
+            color: #2563EB;
+        }
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: 0;
+            left: 50%;
+            background-color: #2563EB;
+            transition: all 0.3s ease;
+            transform: translateX(-50%);
+        }
+        .nav-link:hover::after {
+            width: 100%;
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-gray-50 to-gray-100 min-h-screen">
+    <!-- Navbar -->
+    <nav class="bg-white shadow-lg">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <a href="index.html" class="flex items-center">
+                        <i class="fas fa-store text-blue-600 text-2xl mr-2"></i>
+                        <span class="font-bold text-xl text-gray-800">Data KELOMPOK TST </span>
+                    </a>
+                </div>
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="index.html" class="nav-link flex items-center">
+                        <i class="fas fa-home mr-1"></i>
+                        <span>Beranda</span>
+                    </a>
+                    <a href="barang.html" class="nav-link flex items-center">
+                        <i class="fas fa-box mr-1"></i>
+                        <span>Produk</span>
+                    </a>
+                    <a href="mahasiswa.html" class="nav-link flex items-center">
+                        <i class="fas fa-user-graduate mr-1"></i>
+                        <span>Mahasiswa</span>
+                    </a>
+                </div>
+                <!-- Mobile menu button -->
+                <div class="md:hidden flex items-center">
+                    <button class="mobile-menu-button p-2 rounded-md hover:bg-gray-100 focus:outline-none">
+                        <i class="fas fa-bars text-gray-600 text-xl"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <!-- Mobile menu -->
+        <div class="md:hidden hidden mobile-menu">
+            <div class="px-2 pt-2 pb-3 space-y-1">
+                <a href="index.html" class="block px-3 py-2 rounded-md text-gray-700 hover:bg-gray-100">
+                    <i class="fas fa-home mr-1"></i>
+                    Beranda
+                </a>
+                <a href="barang.html" class="block px-3 py-2 rounded-md text-gray-700 hover:bg-gray-100">
+                    <i class="fas fa-box mr-1"></i>
+                    Produk
+                </a>
+                <a href="mahasiswa.html" class="block px-3 py-2 rounded-md text-gray-700 hover:bg-gray-100">
+                    <i class="fas fa-user-graduate mr-1"></i>
+                    Mahasiswa
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mx-auto max-w-7xl p-8">
+        <div class="text-center py-16">
+            <h1 class="text-4xl font-bold text-gray-800 mb-6">Selamat Datang di Data Kelompok TST </h1>
+            <p class="text-lg text-gray-600 mb-12">Sistem Informasi Manajemen Data Barang dan Mahasiswa</p>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+                <a href="barang.html" class="group">
+                    <div class="bg-white p-8 rounded-xl shadow-md hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1">
+                        <div class="w-16 h-16 mx-auto bg-blue-100 rounded-full flex items-center justify-center mb-4">
+                            <i class="fas fa-box text-blue-600 text-2xl group-hover:scale-110 transition-transform"></i>
+                        </div>
+                        <h2 class="text-2xl font-bold text-gray-800 mb-2">Data Barang</h2>
+                        <p class="text-gray-600">Kelola dan lihat informasi barang yang tersedia</p>
+                    </div>
+                </a>
+                
+                <a href="mahasiswa.html" class="group">
+                    <div class="bg-white p-8 rounded-xl shadow-md hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1">
+                        <div class="w-16 h-16 mx-auto bg-blue-100 rounded-full flex items-center justify-center mb-4">
+                            <i class="fas fa-user-graduate text-blue-600 text-2xl group-hover:scale-110 transition-transform"></i>
+                        </div>
+                        <h2 class="text-2xl font-bold text-gray-800 mb-2">Data Mahasiswa</h2>
+                        <p class="text-gray-600">Akses dan kelola informasi mahasiswa</p>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Mobile menu toggle
+        const mobileMenuButton = document.querySelector('.mobile-menu-button');
+        const mobileMenu = document.querySelector('.mobile-menu');
+
+        mobileMenuButton.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+
+        document.addEventListener('click', (e) => {
+            if (!mobileMenuButton.contains(e.target) && !mobileMenu.contains(e.target)) {
+                mobileMenu.classList.add('hidden');
+            }
+        });
+    </script>
+</body>
+</html>

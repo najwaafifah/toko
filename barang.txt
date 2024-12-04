@@ -1,0 +1,132 @@
+<!-- <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data KELOMPOK TST </title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 p-8">
+    <div class="container mx-auto">
+        <h1 class="text-3xl font-bold mb-6 text-center text-gray-800">Detail Barang</h1>
+        <div id="loading" class="text-center text-blue-500">Memuat data...</div>
+        <div id="barang-detail" class="bg-white rounded-lg shadow-md p-6 hidden">
+        
+        </div>
+    </div>
+
+    <script>
+
+        const queryString = window.location.search;
+        const urlParams = new URLSearchParams(queryString);
+        const id = urlParams.get('id');
+
+        const apiUrl = `http://localhost:8000/api/barang/${id}`;
+
+   
+        fetch(apiUrl)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Gagal mengambil data');
+                }
+                return response.json();
+            })
+            .then(data => {
+                const loadingElement = document.getElementById('loading');
+                const barangDetail = document.getElementById('barang-detail');
+
+               
+                loadingElement.style.display = 'none';
+
+                if (data.status === 'error') {
+                    barangDetail.innerHTML = `<p class="text-red-500">Data barang tidak ditemukan.</p>`;
+                    barangDetail.classList.remove('hidden');
+                    return;
+                }
+
+               
+                const item = data.data;
+                barangDetail.innerHTML = `
+                    <h2 class="text-2xl font-bold text-gray-800 mb-4">${item.name}</h2>
+                    <p class="text-lg text-gray-500">${item.category}</p>
+                    <p class="mt-4 text-gray-700">Supplier: <span class="font-medium">${item.supplier}</span></p>
+                    <p id="stok-${item.id_barang}" class="text-gray-700">Stok: <span class="font-medium">${item.stock}</span></p>
+                    <p class="text-gray-700">Harga: <span class="font-medium">Rp ${parseInt(item.price).toLocaleString()}</span></p>
+                    <p class="mt-4 text-gray-600">${item.note}</p>
+                    <button onclick="beliBarang(${item.id_barang})" class="mt-4 w-full bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600">Beli</button>
+                `;
+                barangDetail.classList.remove('hidden');
+            })
+            .catch(error => {
+                const loadingElement = document.getElementById('loading');
+                loadingElement.textContent = `Terjadi kesalahan: ${error.message}`;
+            });
+
+            function beliBarang(id) {
+            fetch(`${apiUrl}`, {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    jumlah: 1 
+                })
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Gagal mengurangi stok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.status === 'success') {
+                     
+                        const stokElement = document.getElementById(`stok-${id}`);
+                        stokElement.textContent = "Stok: "+data.updated_stock;
+                        alert('Berhasil membeli barang!');
+                    } else {
+                        alert('Stok barang tidak cukup!');
+                    }
+                })
+                .catch(error => {
+                    alert(`Terjadi kesalahan: ${error.message}`);
+                });
+        }
+    </script>
+</body>
+</html> -->
+
+<div>
+    <h1 class="text-4xl font-bold mb-8 text-center text-gray-800">Data Barang</h1>
+    <div id="barangContainer" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"></div>
+</div>
+
+<script>
+    fetch('http://localhost:8000/api/barang')
+        .then(response => {
+            if (!response.ok) throw new Error('Gagal mengambil data barang');
+            return response.json();
+        })
+        .then(data => {
+            const barangContainer = document.getElementById('barangContainer');
+            barangContainer.innerHTML = '';
+            data.data.forEach(item => {
+                const card = document.createElement('div');
+                card.className = 'bg-white rounded-xl shadow-md p-6 hover:shadow-lg';
+                card.innerHTML = `
+                    <div class="flex items-center mb-4">
+                        <h2 class="text-xl font-bold text-gray-800">${item.name}</h2>
+                    </div>
+                    <p>Supplier: ${item.supplier}</p>
+                    <p>Stock: ${item.stock}</p>
+                    <p>Harga: Rp ${item.price}</p>
+                `;
+                barangContainer.appendChild(card);
+            });
+        })
+        .catch(error => {
+            const barangContainer = document.getElementById('barangContainer');
+            barangContainer.innerHTML = `<p class="text-red-600">${error.message}</p>`;
+        });
+</script>
+

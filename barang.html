@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Barang - Data TST</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .fade-enter {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        .fade-enter-active {
+            opacity: 1;
+            transform: translateY(0);
+            transition: opacity 300ms, transform 300ms;
+        }
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #3498db;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .nav-link {
+            position: relative;
+            color: #4B5563;
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            transition: color 0.3s ease;
+        }
+        .nav-link:hover {
+            color: #2563EB;
+        }
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: 0;
+            left: 50%;
+            background-color: #2563EB;
+            transition: all 0.3s ease;
+            transform: translateX(-50%);
+        }
+        .nav-link:hover::after {
+            width: 100%;
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-gray-50 to-gray-100 min-h-screen">
+    <!-- Navbar -->
+    <nav class="bg-white shadow-lg">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <a href="index.html" class="flex items-center">
+                        <i class="fas fa-store text-blue-600 text-2xl mr-2"></i>
+                        <span class="font-bold text-xl text-gray-800">Data KELOMPOK TST </span>
+                    </a>
+                </div>
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="index.html" class="nav-link flex items-center">
+                        <i class="fas fa-home mr-1"></i>
+                        <span>Beranda</span>
+                    </a>
+                    <a href="barang.html" class="nav-link flex items-center">
+                        <i class="fas fa-box mr-1"></i>
+                        <span>Produk</span>
+                    </a>
+                    <a href="mahasiswa.html" class="nav-link flex items-center">
+                        <i class="fas fa-user-graduate mr-1"></i>
+                        <span>Mahasiswa</span>
+                    </a>
+                </div>
+                <!-- Mobile menu button -->
+                <div class="md:hidden flex items-center">
+                    <button class="mobile-menu-button p-2 rounded-md hover:bg-gray-100 focus:outline-none">
+                        <i class="fas fa-bars text-gray-600 text-xl"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <!-- Mobile menu -->
+        <div class="md:hidden hidden mobile-menu">
+            <div class="px-2 pt-2 pb-3 space-y-1">
+                <a href="index.html" class="block px-3 py-2 rounded-md text-gray-700 hover:bg-gray-100">
+                    <i class="fas fa-home mr-1"></i>
+                    Beranda
+                </a>
+                <a href="barang.html" class="block px-3 py-2 rounded-md text-gray-700 hover:bg-gray-100">
+                    <i class="fas fa-box mr-1"></i>
+                    Produk
+                </a>
+                <a href="mahasiswa.html" class="block px-3 py-2 rounded-md text-gray-700 hover:bg-gray-100">
+                    <i class="fas fa-user-graduate mr-1"></i>
+                    Mahasiswa
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mx-auto max-w-7xl p-8">
+        <h1 class="text-4xl font-bold text-gray-800 mb-8">Data Barang</h1>
+
+        <div id="loading" class="hidden">
+            <div class="flex flex-col items-center justify-center p-8">
+                <div class="spinner mb-4"></div>
+                <p class="text-gray-600">Memuat data...</p>
+            </div>
+        </div>
+
+        <div id="error" class="hidden">
+            <div class="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 rounded-lg mb-6">
+                <div class="flex items-center">
+                    <i class="fas fa-exclamation-circle mr-3"></i>
+                    <p id="errorMessage"></p>
+                </div>
+            </div>
+        </div>
+
+        <div id="barangContainer">
+            <main id="barang" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            </main>
+        </div>
+    </div>
+
+    <script>
+        function showLoading(show) {
+            document.getElementById('loading').style.display = show ? 'block' : 'none';
+        }
+
+        function showError(message) {
+            const errorDiv = document.getElementById('error');
+            const errorMessage = document.getElementById('errorMessage');
+            errorMessage.textContent = message;
+            errorDiv.classList.remove('hidden');
+            setTimeout(() => {
+                errorDiv.classList.add('hidden');
+            }, 5000);
+        }
+
+        function addFadeEffect(element) {
+            element.classList.add('fade-enter');
+            requestAnimationFrame(() => {
+                element.classList.add('fade-enter-active');
+                setTimeout(() => {
+                    element.classList.remove('fade-enter', 'fade-enter-active');
+                }, 300);
+            });
+        }
+
+        function loadBarangData() {
+            showLoading(true);
+            document.getElementById('error').classList.add('hidden');
+
+            fetch('http://localhost:8000/api/barang')
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Gagal mengambil data barang');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    showLoading(false);
+                    const barangContainer = document.getElementById('barang');
+                    barangContainer.innerHTML = '';
+
+                    data.data.forEach((item, index) => {
+                        const card = document.createElement('div');
+                        card.className = 'bg-white rounded-xl shadow-md p-6 hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1';
+                        card.innerHTML = `
+                            <div class="flex items-center mb-4">
+                                <div class="w-12 h-12 rounded-full bg-blue-100 text-blue-500 flex items-center justify-center mr-4">
+                                    <i class="fas fa-box text-xl"></i>
+                                </div>
+                                <div>
+                                    <h2 class="text-xl font-bold text-gray-800">${item.name}</h2>
+                                    <p class="text-sm text-blue-500 font-medium">${item.category}</p>
+                                </div>
+                            </div>
+                            <div class="space-y-3">
+                                <div class="flex items-center text-gray-700">
+                                    <i class="fas fa-truck mr-3 text-gray-400"></i>
+                                    <span>Supplier: <span class="font-medium">${item.supplier}</span></span>
+                                </div>
+                                <div class="flex items-center text-gray-700">
+                                    <i class="fas fa-cubes mr-3 text-gray-400"></i>
+                                    <span>Stok: <span class="font-medium">${item.stock}</span></span>
+                                </div>
+                                <div class="flex items-center text-gray-700">
+                                    <i class="fas fa-tag mr-3 text-gray-400"></i>
+                                    <span>Harga: <span class="font-medium">Rp ${parseInt(item.price).toLocaleString()}</span></span>
+                                </div>
+                                <div class="pt-3 border-t">
+                                    <p class="text-gray-600 text-sm">${item.note || 'Tidak ada catatan'}</p>
+                                </div>
+                            </div>
+                        `;
+                        barangContainer.appendChild(card);
+                        setTimeout(() => addFadeEffect(card), index * 100);
+                    });
+                })
+                .catch(error => {
+                    showLoading(false);
+                    showError(error.message);
+                });
+        }
+
+        // Mobile menu toggle
+        const mobileMenuButton = document.querySelector('.mobile-menu-button');
+        const mobileMenu = document.querySelector('.mobile-menu');
+
+        mobileMenuButton.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+
+        document.addEventListener('click', (e) => {
+            if (!mobileMenuButton.contains(e.target) && !mobileMenu.contains(e.target)) {
+                mobileMenu.classList.add('hidden');
+            }
+        });
+
+        // Load initial data
+        loadBarangData();
+    </script>
+</body>
+</html>
