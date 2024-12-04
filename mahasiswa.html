@@ -160,7 +160,7 @@
             showLoading(true);
             document.getElementById('error').classList.add('hidden');
 
-            fetch('http://localhost:8000/api/mahasiswa')
+            fetch('http://127.0.0.1:8000/api/mahasiswa')
                 .then(response => {
                     if (!response.ok) {
                         throw new Error('Gagal mengambil data mahasiswa');
